@@ -22,6 +22,7 @@ function get_tg_ddl(trigger_name      in varchar2,
                     ) return clob is
 begin
   return dbms_metadata.get_ddl('TRIGGER', upper(trigger_name), upper(schema_));
+
 end;
 
 function get_pks_ddl(package_name      in varchar2,
@@ -49,14 +50,15 @@ return clob is
   vTh  number;
   vDoc clob;
 begin
-  vH  :=dbms_metadata.open('TABLE');                                                              -- Specify the object type: TABLE
+  vH  :=dbms_metadata.open('TABLE');                                                              -- Specify the object type: TABLE.
   dbms_metadata.set_filter(vH, 'SCHEMA', upper(schema_));                                         -- Specify the schema name
   dbms_metadata.set_filter(vH, 'NAME', upper(table_name));                                        -- Specify the table name
   vTh:=dbms_metadata.add_transform(vH, 'DDL');                                                    -- Request that the metadata be transformed into creation DDL
   dbms_metadata.set_transform_param(vTh, 'REF_CONSTRAINTS', get_boolean_type(ref_constr));        -- Exclude/include referential constraints
   dbms_metadata.set_transform_param(vTh, 'SEGMENT_ATTRIBUTES', get_boolean_type(segment_attr));   -- Set segment attributes
   dbms_metadata.set_transform_param(vTh, 'SQLTERMINATOR', get_boolean_type(sqlterminator_));      -- Set SQL terminator ";"
-  vDoc:=dbms_metadata.fetch_clob(vH);  dbms_metadata.close(vH);
+  vDoc:=dbms_metadata.fetch_clob(vH);
+  dbms_metadata.close(vH);
   return vDoc;
 end;
 
@@ -76,22 +78,22 @@ return clob is
   idxddls           sys.ku$_ddls;                                                                 -- Metadata is returned in sys.ku$_ddls, which is contained in sys.ku$_ddl
 begin
   if index_name is null and base_object_name is null then raise not_objname_found; end if;
-  vH  :=dbms_metadata.open('INDEX');                                                              -- Specify the object type: INDEX
+  vH  :=dbms_metadata.open('INDEX');                                                              -- Specify the object type: INDEX.
   dbms_metadata.set_filter(vH, 'SCHEMA', upper(schema_));                                         -- Specify the schema name
   vTh:=dbms_metadata.add_transform(vH, 'DDL');                                                    -- Request that the metadata be transformed into creation DDL
   dbms_metadata.set_transform_param(vTh, 'SEGMENT_ATTRIBUTES', get_boolean_type(segment_attr));   -- Set segment attributes
   dbms_metadata.set_transform_param(vTh, 'SQLTERMINATOR', get_boolean_type(sqlterminator_));      -- Set SQL terminator ";"
   if index_name is not null then
-    dbms_metadata.set_filter(vH, 'NAME', upper(index_name));                                      -- Specify the index name
+    dbms_metadata.set_filter(vH, 'NAME', upper(index_name));                                        -- Specify the index name
     vDoc:=dbms_metadata.fetch_clob(vH);
   else
     dbms_metadata.set_filter(vH,'BASE_OBJECT_NAME',upper(base_object_name));                      -- Set base object name
-    dbms_metadata.set_filter(vH,'SYSTEM_GENERATED',get_boolean_type(system_generated));           -- Exclude/include system-generated indexes
+    dbms_metadata.set_filter(vH,'SYSTEM_GENERATED',get_boolean_type(system_generated));           -- Exclude/include system-generated indexes.
     dbms_lob.createtemporary(vDoc, true);
-    dbms_lob.createtemporary(vTempClob, true);                                                    --Create temporary lob;
+    dbms_lob.createtemporary(vTempClob, true);                                                    -- Create temporary lob;
     loop
       idxddls := dbms_metadata.fetch_ddl(vH);
-    exit when idxddls is null;                                                                    -- When there are no more objects to  be retrieved, FETCH_DDL returns NULL
+    exit when idxddls is null;                                                                    -- When there are no more objects to  be retrieved, FETCH_DDL returns NULL.
 
       for i in idxddls.first..idxddls.last loop
         vTempClob := idxddls(i).ddlText;
@@ -107,7 +109,7 @@ begin
     raise_application_error(-20000, 'INDEX_NAME or BASE_OBJECT_NAME must have a value!');
 end;
 
-function get_comment_ddl(base_object_name    in varchar2,
+function get_comment_ddl(base_object_name   in varchar2,
                          base_object_schema  in varchar2 default user
                          ) return clob is
 begin
@@ -126,6 +128,20 @@ begin
   dbms_lob.append(vDoc, get_index_ddl(null, table_name, schema_, sys_gen_indexes, segment_attr, sqlterminator_));
   dbms_lob.append(vDoc, get_comment_ddl(table_name, schema_));
   return vDoc;
+end;
+
+function get_tps_ddl(type_name      in varchar2,
+                     schema_        in varchar2 default user
+                     ) return clob is
+begin
+  return dbms_metadata.get_ddl('TYPE_SPEC', upper(type_name), upper(schema_));
+end;
+
+function get_tpb_ddl(type_name      in varchar2,
+                     schema_        in varchar2 default user
+                     ) return clob is
+begin
+  return dbms_metadata.get_ddl('TYPE_BODY', upper(type_name), upper(schema_));
 end;
 
 end schema_metadata_pkg;

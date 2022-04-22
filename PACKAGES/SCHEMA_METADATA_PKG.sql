@@ -2,6 +2,7 @@ CREATE OR REPLACE EDITIONABLE PACKAGE "DEV"."SCHEMA_METADATA_PKG" as
 /**
  Functions for getting db objects ddl
 */
+
 subtype tBoolNum is pls_integer range 0..1;
 
 /** Gets sequence ddl
@@ -81,6 +82,21 @@ function get_tbl_and_dep_ddl(table_name      in varchar2,
                              schema_         in varchar2 default user,
                              sys_gen_indexes in tBoolNum  default 0,
                              segment_attr    in tBoolNum  default 0,
-                             sqlterminator_  in tBoolNum  default 1) return clob;
+                             sqlterminator_  in tBoolNum  default 1
+							 ) return clob;
+
+/** Gets type specification ddl
+*   @param type_name     Type name
+*/
+function get_tps_ddl(type_name      in varchar2,
+                     schema_        in varchar2 default user
+                     ) return clob;
+
+/** Gets type body ddl
+*   @param type_name     Type name
+*/
+function get_tpb_ddl(type_name      in varchar2,
+                     schema_        in varchar2 default user
+                     ) return clob;
 
 end schema_metadata_pkg;

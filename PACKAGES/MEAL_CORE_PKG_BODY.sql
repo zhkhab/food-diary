@@ -10,7 +10,14 @@ procedure meal_log_update(rec in meal_log%rowtype)
 is
 begin
   if rec.ml_id is not null then
-    update meal_log set row = rec where ml_id=rec.ml_id;
+     update meal_log set ml_date = rec.ml_date,
+                         ml_time = rec.ml_time,
+                         ml_datetime = rec.ml_datetime,
+                         meal_id = rec.meal_id,
+                         srvng_size = rec.srvng_size,
+                         person_id = rec.person_id,
+                         comment_ = rec.comment_
+                   where ml_id=rec.ml_id;
   end if;
 end;
 
@@ -92,6 +99,7 @@ is
 begin
   insert into serving_size values rec returning sz_id into rec.sz_id;
 end;
+
 
 procedure serving_size_update(rec in serving_size%rowtype)
 is
