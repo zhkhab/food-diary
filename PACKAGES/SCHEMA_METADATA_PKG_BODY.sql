@@ -1,11 +1,14 @@
 CREATE OR REPLACE EDITIONABLE PACKAGE BODY "DEV"."SCHEMA_METADATA_PKG" as
 
+c_false   constant pls_integer:=0;
+c_true    constant pls_integer:=1;
+
 function get_boolean_type(val in tBoolNum)
 return boolean result_cache is
   vBoolVal boolean;
 begin
-  case when val = 0 then vBoolVal:=false;
-       when val = 1 then vBoolVal:=true;
+  case val when c_false then vBoolVal:=false;
+           when c_true  then vBoolVal:=true;
   end case;
   return vBoolVal;
 end;
@@ -22,7 +25,6 @@ function get_tg_ddl(trigger_name      in varchar2,
                     ) return clob is
 begin
   return dbms_metadata.get_ddl('TRIGGER', upper(trigger_name), upper(schema_));
-
 end;
 
 function get_pks_ddl(package_name      in varchar2,
@@ -84,7 +86,7 @@ begin
   dbms_metadata.set_transform_param(vTh, 'SEGMENT_ATTRIBUTES', get_boolean_type(segment_attr));   -- Set segment attributes
   dbms_metadata.set_transform_param(vTh, 'SQLTERMINATOR', get_boolean_type(sqlterminator_));      -- Set SQL terminator ";"
   if index_name is not null then
-    dbms_metadata.set_filter(vH, 'NAME', upper(index_name));                                        -- Specify the index name
+    dbms_metadata.set_filter(vH, 'NAME', upper(index_name));                                      -- Specify the index name
     vDoc:=dbms_metadata.fetch_clob(vH);
   else
     dbms_metadata.set_filter(vH,'BASE_OBJECT_NAME',upper(base_object_name));                      -- Set base object name

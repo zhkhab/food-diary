@@ -1,5 +1,14 @@
 CREATE OR REPLACE EDITIONABLE PACKAGE BODY "DEV"."PARAMS_PKG" as
 
+current_date           date;
+user_date_format       varchar2(100);
+user_time_format       varchar2(100);
+user_datetime_format   varchar2(200);
+
+russian_character      varchar2(100 char);  -- List of valid characters for russian names
+english_character      varchar2(100);       -- List of valid characters for english names
+special_character      varchar2(100);       -- List of valid special characters
+
 procedure set_current_date(cdate in date default null)
 is
 begin
@@ -25,6 +34,7 @@ begin
 end;
 
 procedure set_time_format(ut_format in varchar2 default null)
+
 is
 begin
   user_time_format:=nvl(set_time_format.ut_format, 'HH24:MI');
@@ -111,7 +121,7 @@ begin
   set_date_format;
   set_time_format;
   set_datetime_format;
-  russian_character:='?????????????????????????????????';
+  russian_character:='¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿¿';
   english_character:='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   special_character:='-/';
 end params_pkg;

@@ -2,14 +2,6 @@ CREATE OR REPLACE EDITIONABLE PACKAGE "DEV"."PARAMS_PKG" as
 /**
  Procedures for working with APP PARAMETERS
 */
-current_date           date;
-user_date_format       varchar2(100);
-user_time_format       varchar2(100);
-user_datetime_format   varchar2(200);
-
-russian_character      varchar2(100 char);  -- List of valid characters for russian names
-english_character      varchar2(100);       -- List of valid characters for english names
-special_character      varchar2(100);       -- List of valid special characters
 
 /** Sets current date
 *   @param cdate   Current date;

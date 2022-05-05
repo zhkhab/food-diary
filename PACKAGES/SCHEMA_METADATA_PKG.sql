@@ -83,7 +83,7 @@ function get_tbl_and_dep_ddl(table_name      in varchar2,
                              sys_gen_indexes in tBoolNum  default 0,
                              segment_attr    in tBoolNum  default 0,
                              sqlterminator_  in tBoolNum  default 1
-							 ) return clob;
+                             ) return clob;
 
 /** Gets type specification ddl
 *   @param type_name     Type name
